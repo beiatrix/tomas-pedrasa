@@ -16,11 +16,13 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
+    "@nuxt/eslint": "^1.1.0",
     "@nuxtjs/eslint-config-typescript": "^12.1.0",
-    "eslint": "^8.57.0",
+    "eslint": "^9.21.0",
     "eslint-config-custom": "*",
     "nuxt": "^3.10.3",
     "tsconfig": "*",
+    "typescript": "^5.8.2",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"
   }
