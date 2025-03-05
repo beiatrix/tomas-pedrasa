@@ -12,25 +12,28 @@ useHead({
 });
 
 /**
+ * route
+ * ================================================================
+ */
+const route = useRoute()
+
+/**
  * data fetching
  * ================================================================
  */
-const projectsQuery = groq`*[_type == "project"]{
+const projectQuery = groq`*[_type == "project" && slug.current == $slug][0]{
   title,
   slug
 }`
-const {
-  data: projectsData
-} = useSanityQuery<Partial<Project[]>>(
-  projectsQuery
+const { data: projectData } = useSanityQuery<Partial<Project>>(
+  projectQuery,
+  {
+    slug: route.params.slug
+  }
 )
 
 </script>
 
 <template>
-  <ul>
-    <li v-for="project in projectsData" :key="project.slug" >
-      <nuxt-link :to="`/projects/${project.slug.current}`">{{ project.title }}</nuxt-link>
-    </li>
-  </ul>
+  <h1 v-if="projectData">{{ projectData.title }}</h1>
 </template>
