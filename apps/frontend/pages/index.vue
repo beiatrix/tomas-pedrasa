@@ -17,20 +17,56 @@ useHead({
  */
 const projectsQuery = groq`*[_type == "project"]{
   title,
-  slug
+  slug,
+  category
 }`
 const {
-  data: projectsData
+  data: projectsData,
+  error,
+  status
 } = useSanityQuery<Partial<Project[]>>(
   projectsQuery
 )
 
+/**
+ * projects
+ * ================================================================
+ */
+const projectsByCategory = computed(() => {
+  return projectsData.value?.reduce((categories, project) => {
+    if (project.category in categories) {
+      categories[project.category].push(project)
+    } else {
+      categories[project.category] = [project]
+    }
+      return categories
+    }, {} as { [key: string]: Project[] })
+})
 </script>
 
 <template>
-  <ul>
-    <li v-for="project in projectsData" :key="project.slug" >
-      <nuxt-link :to="`/projects/${project.slug.current}`">{{ project.title }}</nuxt-link>
-    </li>
-  </ul>
+  <div v-if="status === 'pending'">
+    <div class="flex items-center justify-center mt-[-84px] min-h-screen">
+      <div class="loader" />
+    </div>
+  </div>
+  <div v-else-if="error">
+    <Error />
+  </div>
+  <div
+    v-else-if="projectsData"
+    class="py-16"
+  >
+    <div
+      v-for="(categoryProjects, category) in projectsByCategory"
+      :key="`category-projects-${category}`"
+    >
+      <h1>{{ category }}</h1>
+      <ul>
+        <li v-for="project in categoryProjects" :key="project.slug">
+          <nuxt-link :to="`/projects/${project.slug.current}`">{{ project.title }}</nuxt-link>
+        </li>
+      </ul>
+    </div>
+  </div>
 </template>
